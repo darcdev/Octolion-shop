@@ -1,39 +1,88 @@
 const express = require('express');
 const router = express.Router();
-const productMock  = require('../../utils/products');
+const productsService  = require('../../services/products');
 
-router.get('/' , (req,res) => {
-    const { query } = req;
-    res.status(200).json({
-        data : productMock,
-        message : 'products listed'
-    })
+router.get('/' , async (req,res) => {
+    const { tags } = req.query;
+    try{
+        const getProducts = await productsService.getProducts({tags})
+        res.status(200).json({
+            data : getProducts,
+            message : 'products listed'
+        })
+    }
+    catch(e){
+        next(e)
+    }
 })
-router.get('/:productId' , (req,res) => {
+router.get('/:productId' , async (req,res,next) => {
     const { productId } =  req.params;
+    try{
+        const getProduct = await productsService.getProducts({productId})
+        res.status(200).json({
+            data : getProduct,
+            message : 'product retrieved'
+        })
+    }
+    catch(e){
+        next(e);
+    }
+})
+router.post('/' , async (req,res,next) => {
+    const {body:product} = req;
+    try{
+        const createProduct = await productsService.getProducts({product})
 
     res.status(200).json({
-        data : productMock[0],
-        message : 'product retrieved'
-    })
-})
-router.post('/' , (req,res) => {
-    res.status(200).json({
-        data : productMock[0],
+        data : createProduct,
         message : 'product created'
     })
+    }
+    catch(e){
+        next(e);
+    }
 })
-router.put('/:productId' , (req,res) => {
+router.put('/:productId' , async (req,res,next) => {
+    const {productId} = req.params;
+    const {body:product} = req;
+    try{
+        const updateProduct = await productsService.updateProduct({productId , product});
+
     res.status(200).json({
-        data : productMock[0],
+        data : updateProduct,
         message : 'product modified'
     })
+    }
+    catch(e){
+        next(e);
+    }
 })
-router.delete('/:productId' , (req,res) => {
-    res.status(200).json({
-        data : productMock[0],
-        message : 'products delete'
-    })
+router.patch('/:productId', async (req,res,next) => {
+    const {productId} = req.params;
+    const {body:product}  = req;
+    try{
+        const pathProduct = await productsService.patchProduct({productId , product})
+        res.status(200).json({
+            data  : pathProduct,
+            message : 'product modified'
+        })
+    }
+    catch(e){
+        next(e);
+    }
+})
+router.delete('/:productId' , async (req,res,next) => {
+    const { productId } = req.params;
+    try{
+        const deleteProduct = await productsService.deleteProduct({productId});
+        res.status(200).json({
+            data : deleteProduct,
+            message : 'products delete'
+        })
+    }
+    catch(e){
+        next(e);
+    }
 })
 
 module.exports = router;
