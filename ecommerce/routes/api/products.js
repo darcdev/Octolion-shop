@@ -1,8 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const productsService  = require('../../services/products');
+const validation = require('../../utils/middlewares/validationHandler');
+const { productIdSchema ,
+        productTagSchema,
+        createProductSchema,
+        updateProductSchema
+      } = require('../../utils/schemas/products');
 
 router.get('/' , async (req,res,next) => {
+
     const { tags } = req.query;
     try{
         const getProducts = await productsService.getProducts({tags})
@@ -28,7 +35,7 @@ router.get('/:productId' , async (req,res,next) => {
         next(e);
     }
 })
-router.post('/' , async (req,res,next) => {
+router.post('/' , validation(createProductSchema),  async (req,res,next) => {
     const {body:product} = req;
     try{
         const createProduct = await productsService.createProduct({product})
@@ -42,7 +49,7 @@ router.post('/' , async (req,res,next) => {
         next(e);
     }
 })
-router.put('/:productId' , async (req,res,next) => {
+router.put('/:productId' ,validation({productId : productIdSchema} , "params"), validation(updateProductSchema) , async (req,res,next) => {
     const {productId} = req.params;
     const {body:product} = req;
     try{
