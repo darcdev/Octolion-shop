@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const productsService  = require('../../services/products');
 
-router.get('/' , async (req,res) => {
+router.get('/' , async (req,res,next) => {
     const { tags } = req.query;
     try{
         const getProducts = await productsService.getProducts({tags})
@@ -31,7 +31,7 @@ router.get('/:productId' , async (req,res,next) => {
 router.post('/' , async (req,res,next) => {
     const {body:product} = req;
     try{
-        const createProduct = await productsService.getProducts({product})
+        const createProduct = await productsService.createProduct({product})
 
     res.status(200).json({
         data : createProduct,
