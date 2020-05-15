@@ -2,10 +2,11 @@ const express = require('express');
 const path = require("path");
 const bodyParser = require('body-parser');
 const boom = require("@hapi/boom");
+const cors = require("cors");
 
 const productsRouter = require('./routes/views/products');
 const productsApiRouter = require('./routes/api/products');
-
+const apiAuthRouter = require('./routes/api/auth');
 const { logErrors , 
         wrapErrors,
         clientErrorHandler , 
@@ -17,6 +18,7 @@ const isRequestAjaxOrApi = require("./utils/isRequestAjaxOrApi");
 const app = express();
 
 //middlewares
+app.use(cors())
 app.use(bodyParser.json());
 
 //static files
@@ -29,6 +31,7 @@ app.set("view engine" , "pug");
 // routes
 app.use('/products', productsRouter);
 app.use('/api/products' , productsApiRouter);
+app.use('/api/auth' , apiAuthRouter);
 
 //redirect
 app.get('/', (req,res) => {

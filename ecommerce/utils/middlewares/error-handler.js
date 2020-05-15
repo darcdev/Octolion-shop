@@ -28,7 +28,7 @@ function clientErrorHandler(err,req,res,next){
     
       // catch errors for AJAX request or if an error ocurrs while streaming
       if (isRequestAjaxOrApi(req) || res.headersSent) {
-        res.status(statusCode).json(withErrorStack(payload, err.stack));
+        res.status(statusCode).json(withErrorStack(payload));
       } else {
         next(err);
       }
